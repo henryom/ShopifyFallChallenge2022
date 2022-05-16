@@ -1,0 +1,70 @@
+<!doctype html>
+<title>Inventory Management System</title>
+
+<h3>Inventory Management System</h3>
+
+
+<div style="">
+  <div id="items" style="">
+    <div style="column-count: 2;">
+      <h2>Items</h2>
+      <button>Add Item</button>
+    </div>
+    
+    <table style="height=100%">
+      <tr>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Notes</th>
+        <th></th>
+        <th></th>
+      </tr>
+      {% for item in items %}
+        <tr>
+          <th><h4> {{item["name"]}} </h4></th>
+          <th><h4> {{item["quantity"]}} </h4></th>
+          <th><p> {{item["notes"]}} </p></th>
+          <th><button>Edit</button></th>
+          <th><button>Remove</button></th>
+        </tr>
+      {% endfor %}
+    </table>
+
+  </div>
+
+  <div id="locations" style="max-heigth=30%">
+    <div style="column-count: 2;">
+      <h2>Locations</h2>
+      <form action="newLocation">
+        <button type="submit">Add Location</button>
+      </form>
+    </div>
+    <table style="height=100%">
+      <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th></th>
+        <th></th>
+      </tr>
+      {% for location in locations %}
+        <tr>
+          <th><h4> {{location["name"]}} </h4></th>
+          <th><h4> {{location["address"]}} </h4></th>
+          <th>
+            <form action="editLocation?id={{location.id}}" method="POST">
+              <button onclick="submit">Edit</button>
+            </form>
+          </th>
+          <th>
+            <form action="removeLocation?id={{location.id}}" method="POST">
+              
+              <button onclick="submit">Remove</button>
+            </form>
+          </th>
+        </tr>
+      {% endfor %}
+    </table>
+    
+
+  </div>
+</div>
