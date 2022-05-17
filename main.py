@@ -28,7 +28,7 @@ def postItem():
   # if no id, assign a random one
   id = os.urandom(10).hex()
   
-  if id in request.form:
+  if "id" in request.form:
     id = request.form['id']
 
   name = request.form['name']
@@ -61,7 +61,6 @@ def removeItem():
   id = request.args.get("id")
   if id != None:
     del db["items"][id]
-    # TODO: remove references
     
   return redirect('/')
 
@@ -105,7 +104,6 @@ def removeLocation():
   id = request.args.get("id")
   if id != None:
     del db["locations"][id]
-    # TODO: remove references
     
   return redirect('/')
 
