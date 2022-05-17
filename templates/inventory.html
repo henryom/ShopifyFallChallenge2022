@@ -8,7 +8,9 @@
   <div id="items" style="">
     <div style="column-count: 2;">
       <h2>Items</h2>
-      <button>Add Item</button>
+      <form action="newItem">
+        <button type="submit">Add Item</button>
+      </form>
     </div>
     
     <table style="height=100%">
@@ -16,6 +18,7 @@
         <th>Name</th>
         <th>Quantity</th>
         <th>Notes</th>
+        <th>Location</th>
         <th></th>
         <th></th>
       </tr>
@@ -24,8 +27,21 @@
           <th><h4> {{item["name"]}} </h4></th>
           <th><h4> {{item["quantity"]}} </h4></th>
           <th><p> {{item["notes"]}} </p></th>
-          <th><button>Edit</button></th>
-          <th><button>Remove</button></th>
+          {% if item["locationName"] is defined %}
+            <th>{{item["locationName"]}}</th>
+          {% else %}
+            <th>-</th>
+          {% endif %}
+          <th>
+            <form action="editItem?id={{item.id}}" method="POST">
+              <button onclick="submit">Edit</button>
+            </form>
+          </th>
+          <th>
+            <form action="removeItem?id={{item.id}}" method="POST">
+              <button onclick="submit">Remove</button>
+            </form>
+          </th>
         </tr>
       {% endfor %}
     </table>
@@ -57,7 +73,6 @@
           </th>
           <th>
             <form action="removeLocation?id={{location.id}}" method="POST">
-              
               <button onclick="submit">Remove</button>
             </form>
           </th>

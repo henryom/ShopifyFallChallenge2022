@@ -2,7 +2,6 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect
-from flask import flash
 
 import os
 
@@ -11,18 +10,21 @@ from replit import db
 app = Flask(__name__)
 
 
-# if "items" not in db:
-db["items"] = {"0": {"id": "0", "name": "default item 1", "quantity": 5}, "1": {"id": "1", "name": "default item 2", "quantity": 5}, "2":{"id": "2", "name": "default item 3", "quantity": 5}}
-db["locations"] = {"0": {"id": "0", "name": "default location", "address": "301 Warehouse Rd, Oregon, USA"}}
-
 
 @app.route('/')
 def index():
-    return render_template('inventory.html', items=db["items"].values(), locations=db["locations"].values())
+    items = db["items"].values()
+    # add location names if ids are valid
+    for item in items:
+      item["locationName"] = db["locations"][item["locationID"]]["name"] if item["locationID"] in db["locations"] else "-"
+      
+    return render_template('inventory.html', items=items, locations=db["locations"].values())
 
+# Items
 
 @app.route('/item', methods=['POST'])
 def postItem():
+
   # if no id, assign a random one
   id = os.urandom(10).hex()
   
@@ -31,13 +33,39 @@ def postItem():
 
   name = request.form['name']
   quantity = request.form['quantity']
+  locationID = request.form['locationID']
+  notes = request.form['notes']
 
-  item = {"id": id, "name": name, "quantity": quantity}
+  item = {"id": id, "name": name, "quantity": quantity, "locationID": locationID, "notes": notes}
 
   db["items"][id] = item
 
   return redirect('/')
 
+# new item page
+@app.route('/newItem', methods=['GET'])
+def addItem():
+  return render_template('item.html', locations=db["locations"].values())
+
+# edit item page
+@app.route('/editItem', methods=['POST'])
+def editItem():
+  id = request.args.get("id")
+  item = db["items"][id]
+  
+  return render_template('item.html', item=item, locations=db["locations"].values())
+
+# delete item
+@app.route('/removeItem', methods=['POST'])
+def removeItem():
+  id = request.args.get("id")
+  if id != None:
+    del db["items"][id]
+    # TODO: remove references
+    
+  return redirect('/')
+
+# Locations
 
 # post location, for adding or editing a post
 @app.route('/location', methods=['POST'])
@@ -77,6 +105,7 @@ def removeLocation():
   id = request.args.get("id")
   if id != None:
     del db["locations"][id]
+    # TODO: remove references
     
   return redirect('/')
 
